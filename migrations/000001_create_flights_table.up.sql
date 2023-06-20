@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS flights (
     destination VARCHAR(255) NOT NULL,
     airplane VARCHAR(50) NOT NULL,
     airline VARCHAR(50) NOT NULL,
+    price BIGINT NOT NULL,
     capacity INT NOT NULL,
     started_at TIMESTAMPTZ NOT NULL,
     finished_at TIMESTAMPTZ NOT NULL

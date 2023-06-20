@@ -14,6 +14,7 @@ type Flight struct {
 	Airplane    string `gorm:"type:varchar(50)"`
 	Airline     string `gorm:"type:varchar(50)"`
 	Capacity    int
+	Price 		int
 	StartedAt   time.Time
 	FinishedAt  time.Time
 }

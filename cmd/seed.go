@@ -40,6 +40,7 @@ func addFlights(configPath string) error {
 			Destination: "Shiraz",
 			Airplane:    "Boeing 747",
 			Airline:     "Delta Airlines",
+			Price:       1500000,
 			Capacity:    250,
 			StartedAt:   time.Now(),
 			FinishedAt:  time.Now().Add(time.Hour * 4),
@@ -50,6 +51,7 @@ func addFlights(configPath string) error {
 			Destination: "Tehran",
 			Airplane:    "Boeing 747",
 			Airline:     "Delta Airlines",
+			Price:       1350000,
 			Capacity:    150,
 			StartedAt:   time.Now().Add(time.Hour * 8),
 			FinishedAt:  time.Now().Add(time.Hour * 12),
@@ -60,6 +62,7 @@ func addFlights(configPath string) error {
 			Destination: "Kish",
 			Airplane:    "Airbus A320",
 			Airline:     "British Airways",
+			Price:       1450000,
 			Capacity:    180,
 			StartedAt:   time.Now().Add(time.Hour * 2),
 			FinishedAt:  time.Now().Add(time.Hour * 3),
@@ -70,6 +73,7 @@ func addFlights(configPath string) error {
 			Destination: "Mashhad",
 			Airplane:    "Boeing 787",
 			Airline:     "Japan Airlines",
+			Price:       900000,
 			Capacity:    300,
 			StartedAt:   time.Now().Add(time.Hour * 5),
 			FinishedAt:  time.Now().Add(time.Hour * 12),
@@ -90,6 +94,7 @@ func addFlights(configPath string) error {
 			Destination: "Esfahan",
 			Airplane:    "Boeing 777",
 			Airline:     "Singapore Airlines",
+			Price:       1100000,
 			Capacity:    280,
 			StartedAt:   time.Now().Add(time.Hour * 74),
 			FinishedAt:  time.Now().Add(time.Hour * 80),
@@ -100,10 +105,22 @@ func addFlights(configPath string) error {
 			Destination: "Tabriz",
 			Airplane:    "Airbus A321",
 			Airline:     "Aseman Airlines",
+			Price:       1550000,
 			Capacity:    220,
 			StartedAt:   time.Now().Add(time.Hour * 78),
 			FinishedAt:  time.Now().Add(time.Hour * 82),
 		},
 	}
-	return db.Create(&flights).Error
+	for _, flight := range flights {
+		var count int64
+		db.Model(&models.Flight{}).Where("number = ?", flight.Number).Count(&count)
+		if count > 0 {
+			continue
+		}
+		if err := db.Create(&flight).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
