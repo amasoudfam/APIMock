@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"on-air/models"
+	"on-air/repository"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -34,8 +35,8 @@ func (f *Flight) List(ctx echo.Context) error {
 		return ctx.JSON(http.StatusUnprocessableEntity, err.Error())
 	}
 
-	var flights []models.Flight
-	if err := f.DB.Where("origin = ? AND destination = ? AND DATE(started_at) = ?", req.Origin, req.Destination, req.Date).Find(&flights).Error; err != nil {
+	flights, err := repository.GetFlights(f.DB, req.Origin, req.Destination, req.Date)
+	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
 
@@ -44,4 +45,14 @@ func (f *Flight) List(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, response)
+}
+
+type ReserveRequest struct {
+}
+
+type ReserveResponse struct {
+}
+
+func (f *Flight) Reserve(ctx echo.Context) error {
+	return nil
 }
