@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"on-air/models"
 	"on-air/repository"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -61,6 +62,20 @@ func (f *Flight) Cities(ctx echo.Context) error {
 		f.DB.Distinct("destination").Select("destination").Model(&models.Flight{}),
 	).Scan(&res).Error; err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, res)
+}
+
+func (f *Flight) Dates(ctx echo.Context) error {
+	var dates []time.Time
+	if err := f.DB.Model(&models.Flight{}).Select("DATE(started_at)").Distinct().Find(&dates).Error; err != nil {
+		return ctx.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	res := make([]string, len(dates))
+	for i, date := range dates {
+		res[i] = date.Format("2006-01-02")
 	}
 
 	return ctx.JSON(http.StatusOK, res)
