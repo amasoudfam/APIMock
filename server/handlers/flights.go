@@ -25,6 +25,7 @@ type FlightFields struct {
 	Destination   string    `json:"destination"`
 	Airplane      string    `json:"airplane"`
 	Airline       string    `json:"airline"`
+	Capacity      int       `json:"capacity"`
 	EmptyCapacity int       `json:"empty_capacity"`
 	Price         int       `json:"price"`
 	StartedAt     time.Time `json:"startedAt"`
