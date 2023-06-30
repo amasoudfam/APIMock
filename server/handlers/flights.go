@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"on-air/models"
 	"on-air/repository"
 	"time"
 
@@ -20,8 +19,20 @@ type ListRequest struct {
 	Date        string `query:"date" validate:"required,datetime=2006-01-02"`
 }
 
+type FlightFields struct {
+	Number        string    `json:"number"`
+	Origin        string    `json:"origin"`
+	Destination   string    `json:"destination"`
+	Airplane      string    `json:"airplane"`
+	Airline       string    `json:"airline"`
+	EmptyCapacity int       `json:"empty_capacity"`
+	Price         int       `json:"price"`
+	StartedAt     time.Time `json:"startedAt"`
+	FinishedAt    time.Time `json:"finishedAt"`
+}
+
 type ListResponse struct {
-	Flights []models.Flight `json:"flights"`
+	Flights []FlightFields `json:"flights"`
 }
 
 func (f *Flight) FlightsFromOrgToDestInDate(ctx echo.Context) error {
@@ -31,62 +42,176 @@ func (f *Flight) FlightsFromOrgToDestInDate(ctx echo.Context) error {
 	}
 
 	if err := ctx.Validate(req); err != nil {
-		return ctx.JSON(http.StatusUnprocessableEntity, err.Error())
+		return ctx.JSON(http.StatusUnprocessableEntity, "input data is not valid")
 	}
 
 	flights, err := repository.GetFlights(f.DB, req.Origin, req.Destination, req.Date)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err.Error())
+		return ctx.JSON(http.StatusInternalServerError, "Failed to get flights. Please try again later.")
 	}
 
 	response := ListResponse{
-		Flights: flights,
+		Flights: make([]FlightFields, len(flights)),
+	}
+
+	for i, flight := range flights {
+		response.Flights[i] = FlightFields{
+			Number:        flight.Number,
+			Origin:        flight.Origin,
+			Destination:   flight.Destination,
+			Airplane:      flight.Airplane,
+			Airline:       flight.Airline,
+			EmptyCapacity: flight.EmptyCapacity,
+			Price:         flight.Price,
+			StartedAt:     flight.StartedAt,
+			FinishedAt:    flight.FinishedAt,
+		}
 	}
 
 	return ctx.JSON(http.StatusOK, response)
 }
 
+type AirplanesResponse struct {
+	Airplanes []string
+}
+
 func (f *Flight) Airplanes(ctx echo.Context) error {
-	var res []string
-	if err := f.DB.Model(&models.Flight{}).Select("airplane").Distinct().Find(&res).Error; err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err.Error())
+	airplanes, err := repository.GetAirplanes(f.DB)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Failed to get airplanes. Please try again later.")
 	}
 
-	return ctx.JSON(http.StatusOK, res)
+	return ctx.JSON(http.StatusOK, AirplanesResponse{
+		Airplanes: airplanes,
+	})
+}
+
+type CitiesResponse struct {
+	Cities []string
 }
 
 func (f *Flight) Cities(ctx echo.Context) error {
-	var res []string
-	if err := f.DB.Raw("? UNION ?",
-		f.DB.Distinct("origin").Select("origin").Model(&models.Flight{}),
-		f.DB.Distinct("destination").Select("destination").Model(&models.Flight{}),
-	).Scan(&res).Error; err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err.Error())
+	cities, err := repository.GetCities(f.DB)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Failed to get cities. Please try again later.")
 	}
 
-	return ctx.JSON(http.StatusOK, res)
+	return ctx.JSON(http.StatusOK, CitiesResponse{
+		Cities: cities,
+	})
+}
+
+type DatesResponse struct {
+	Dates []string
 }
 
 func (f *Flight) Dates(ctx echo.Context) error {
-	var dates []time.Time
-	if err := f.DB.Model(&models.Flight{}).Select("DATE(started_at)").Distinct().Find(&dates).Error; err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err.Error())
+	dates, err := repository.GetDates(f.DB)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Failed to get dates. Please try again later.")
 	}
 
-	res := make([]string, len(dates))
-	for i, date := range dates {
-		res[i] = date.Format("2006-01-02")
+	return ctx.JSON(http.StatusOK, DatesResponse{
+		Dates: dates,
+	})
+}
+
+type FlightResponse struct {
+	Flight FlightFields
+}
+
+func (f *Flight) Flight(ctx echo.Context) error {
+	number := ctx.Param("number")
+	flight, err := repository.GetFlight(f.DB, number)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Failed to get the Flight. Please try again later.")
+	}
+
+	return ctx.JSON(http.StatusOK, FlightResponse{
+		Flight: FlightFields{
+			Number:        flight.Number,
+			Origin:        flight.Origin,
+			Destination:   flight.Destination,
+			Airplane:      flight.Airplane,
+			Airline:       flight.Airline,
+			EmptyCapacity: flight.EmptyCapacity,
+			Price:         flight.Price,
+			StartedAt:     flight.StartedAt,
+			FinishedAt:    flight.FinishedAt,
+		},
+	})
+}
+
+type ReserveRequest struct {
+	Number string `json:"number" validate:"required"`
+}
+
+type ReserveResponse struct {
+	Status  bool
+	Message string
+}
+
+func (f *Flight) Reserve(ctx echo.Context) error {
+	var req ReserveRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid request parameters")
+	}
+
+	if err := ctx.Validate(req); err != nil {
+		return ctx.JSON(http.StatusUnprocessableEntity, "input data is not valid")
+	}
+
+	status, err := repository.DecrementEmptyCapacity(f.DB, req.Number)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Failed to reserve the flight. Please try again later.")
+	}
+
+	res := ReserveResponse{
+		Status:  status,
+		Message: "",
+	}
+	if status {
+		res.Message = "Flight reservation was successful."
+	} else {
+		res.Message = "Flight reservation failed. No available capacity."
 	}
 
 	return ctx.JSON(http.StatusOK, res)
 }
 
-type ReserveRequest struct {
+type RefundRequest struct {
+	Number string `json:"number" validate:"required"`
 }
 
-type ReserveResponse struct {
+type RefundResponse struct {
+	Status  bool
+	Message string
 }
 
-func (f *Flight) Reserve(ctx echo.Context) error {
-	return nil
+func (f *Flight) Refund(ctx echo.Context) error {
+	var req ReserveRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid request parameters")
+	}
+
+	if err := ctx.Validate(req); err != nil {
+		return ctx.JSON(http.StatusUnprocessableEntity, "input data is not valid")
+	}
+
+	status, err := repository.IncrementEmptyCapacity(f.DB, req.Number)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Failed to refund the flight. Please try again later.")
+	}
+
+	res := ReserveResponse{
+		Status:  status,
+		Message: "",
+	}
+	if status {
+		res.Message = "Flight refund was successful."
+	} else {
+		res.Message = "Flight refund failed."
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }

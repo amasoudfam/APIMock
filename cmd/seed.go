@@ -4,12 +4,14 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"errors"
 	"on-air/config"
 	"on-air/databases"
 	"on-air/models"
 	"time"
 
 	"github.com/spf13/cobra"
+	"gorm.io/gorm"
 )
 
 // seedCmd represents the seed command
@@ -119,13 +121,24 @@ func addFlights(configPath string) error {
 			FinishedAt:    time.Now().Add(time.Hour * 82),
 		},
 	}
+
 	for _, flight := range flights {
-		var count int64
-		db.Model(&models.Flight{}).Where("number = ?", flight.Number).Count(&count)
-		if count > 0 {
-			continue
-		}
-		if err := db.Create(&flight).Error; err != nil {
+		err := db.Transaction(func(tx *gorm.DB) error {
+			var existingFlight models.Flight
+			if err := tx.Where("number = ?", flight.Number).First(&existingFlight).Error; err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					return tx.Create(&flight).Error
+				}
+				return err
+			}
+
+			existingFlight.StartedAt = flight.StartedAt
+			existingFlight.FinishedAt = flight.FinishedAt
+
+			return tx.Save(&existingFlight).Error
+		})
+
+		if err != nil {
 			return err
 		}
 	}
