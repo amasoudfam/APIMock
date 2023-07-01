@@ -14,8 +14,8 @@ type Flight struct {
 }
 
 type ListRequest struct {
-	Origin      string `query:"org" validate:"required"`
-	Destination string `query:"dest" validate:"required"`
+	Origin      string `query:"origin" validate:"required"`
+	Destination string `query:"destination" validate:"required"`
 	Date        string `query:"date" validate:"required,datetime=2006-01-02"`
 }
 
@@ -32,10 +32,6 @@ type FlightFields struct {
 	FinishedAt    time.Time `json:"finishedAt"`
 }
 
-type ListResponse struct {
-	Flights []FlightFields `json:"flights"`
-}
-
 func (f *Flight) FlightsFromOrgToDestInDate(ctx echo.Context) error {
 	var req ListRequest
 	if err := ctx.Bind(&req); err != nil {
@@ -43,7 +39,7 @@ func (f *Flight) FlightsFromOrgToDestInDate(ctx echo.Context) error {
 	}
 
 	if err := ctx.Validate(req); err != nil {
-		return ctx.JSON(http.StatusUnprocessableEntity, "input data is not valid")
+		return ctx.JSON(http.StatusUnprocessableEntity, "Input data is not valid")
 	}
 
 	flights, err := repository.GetFlights(f.DB, req.Origin, req.Destination, req.Date)
@@ -51,17 +47,15 @@ func (f *Flight) FlightsFromOrgToDestInDate(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to get flights. Please try again later.")
 	}
 
-	response := ListResponse{
-		Flights: make([]FlightFields, len(flights)),
-	}
-
+	response := make([]FlightFields, len(flights))
 	for i, flight := range flights {
-		response.Flights[i] = FlightFields{
+		response[i] = FlightFields{
 			Number:        flight.Number,
 			Origin:        flight.Origin,
 			Destination:   flight.Destination,
 			Airplane:      flight.Airplane,
 			Airline:       flight.Airline,
+			Capacity:      flight.Capacity,
 			EmptyCapacity: flight.EmptyCapacity,
 			Price:         flight.Price,
 			StartedAt:     flight.StartedAt,
