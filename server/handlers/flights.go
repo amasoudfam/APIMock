@@ -81,23 +81,13 @@ func (f *Flight) Airplanes(ctx echo.Context) error {
 	})
 }
 
-type CitiesResponse struct {
-	Cities []string
-}
-
 func (f *Flight) Cities(ctx echo.Context) error {
 	cities, err := repository.GetCities(f.DB)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to get cities. Please try again later.")
 	}
 
-	return ctx.JSON(http.StatusOK, CitiesResponse{
-		Cities: cities,
-	})
-}
-
-type DatesResponse struct {
-	Dates []string
+	return ctx.JSON(http.StatusOK, cities)
 }
 
 func (f *Flight) Dates(ctx echo.Context) error {
@@ -106,13 +96,7 @@ func (f *Flight) Dates(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to get dates. Please try again later.")
 	}
 
-	return ctx.JSON(http.StatusOK, DatesResponse{
-		Dates: dates,
-	})
-}
-
-type FlightResponse struct {
-	Flight FlightFields
+	return ctx.JSON(http.StatusOK, dates)
 }
 
 func (f *Flight) Flight(ctx echo.Context) error {
@@ -122,18 +106,16 @@ func (f *Flight) Flight(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to get the Flight. Please try again later.")
 	}
 
-	return ctx.JSON(http.StatusOK, FlightResponse{
-		Flight: FlightFields{
-			Number:        flight.Number,
-			Origin:        flight.Origin,
-			Destination:   flight.Destination,
-			Airplane:      flight.Airplane,
-			Airline:       flight.Airline,
-			EmptyCapacity: flight.EmptyCapacity,
-			Price:         flight.Price,
-			StartedAt:     flight.StartedAt,
-			FinishedAt:    flight.FinishedAt,
-		},
+	return ctx.JSON(http.StatusOK, FlightFields{
+		Number:        flight.Number,
+		Origin:        flight.Origin,
+		Destination:   flight.Destination,
+		Airplane:      flight.Airplane,
+		Airline:       flight.Airline,
+		EmptyCapacity: flight.EmptyCapacity,
+		Price:         flight.Price,
+		StartedAt:     flight.StartedAt,
+		FinishedAt:    flight.FinishedAt,
 	})
 }
 
