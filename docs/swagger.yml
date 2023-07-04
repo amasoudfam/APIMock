@@ -101,7 +101,7 @@ paths:
                   - "2023-06-15"
         '500':
           description: Internal Server Error
-  /flights/:id:
+  /flights/{id}:
     get:
       summary: Get details of a specific flight
       tags:
