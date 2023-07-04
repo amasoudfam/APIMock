@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Build Go project
 go build -o on-air .
 
