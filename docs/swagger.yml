@@ -1,0 +1,257 @@
+openapi: '3.0.2'
+info:
+  version: 1.0.0
+  title: Flight API
+servers:
+  - url: http://localhost:8200
+    description: on-air project
+paths:
+  /flights:
+    get:
+      summary: Get flights from origin to destination on a specific date
+      tags:
+        - Flights
+      parameters:
+        - in: query
+          name: origin
+          required: true
+          schema:
+            type: string
+          description: Origin of the flight
+        - in: query
+          name: destination
+          required: true
+          schema:
+            type: string
+          description: Destination of the flight
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+          description: 'Date of the flight (Format: YYYY-MM-DD)'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlightFields'
+        '400':
+          description: Bad Request
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Internal Server Error
+  /flights/airplanes:
+    get:
+      summary: Get the list of available airplanes
+      tags:
+        - Flights
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirplanesResponse'
+        '500':
+          description: Internal Server Error
+  /flights/cities:
+    get:
+      summary: Get the list of cities
+      tags:
+        - Flights
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                application/json:
+                  value:
+                  - "Shiraz"
+                  - "Esfahan"
+                  - "Tehran"
+        '500':
+          description: Internal Server Error
+  /flights/dates:
+    get:
+      summary: Get the list of available dates
+      tags:
+        - Flights
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                application/json:
+                  value:
+                  - "2023-06-12"
+                  - "2023-06-14"
+                  - "2023-06-15"
+        '500':
+          description: Internal Server Error
+  /flights/{number}:
+    get:
+      summary: Get details of a specific flight
+      tags:
+        - Flights
+      parameters:
+        - name: number
+          in: path
+          description: Flight number
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlightFields'
+        '500':
+          description: Internal Server Error
+  /flights/reserve:
+    post:
+      summary: Reserve a flight
+      tags:
+        - Flights
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReserveRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReserveResponse'
+        '400':
+          description: Bad Request
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Internal Server Error
+  /flights/refund:
+    post:
+      summary: Refund a flight
+      tags:
+        - Flights
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+        '400':
+          description: Bad Request
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Internal Server Error
+tags:
+  - name: Flights
+    description: Operations related to flights
+components:
+  schemas:
+    ListRequest:
+      type: object
+      properties:
+        origin:
+          type: string
+          description: Origin of the flight
+        destination:
+          type: string
+          description: Destination of the flight
+        date:
+          type: string
+          format: date
+          description: 'Date of the flight (Format: YYYY-MM-DD)'
+    FlightFields:
+      type: object
+      properties:
+        number:
+          type: string
+          description: Flight number
+        origin:
+          type: string
+          description: Origin of the flight
+        destination:
+          type: string
+          description: Destination of the flight
+        airplane:
+          type: string
+          description: Airplane model
+        airline:
+          type: string
+          description: Airline name
+        capacity:
+          type: integer
+          description: Total capacity of the flight
+        empty_capacity:
+          type: integer
+          description: Remaining empty capacity of the flight
+        price:
+          type: integer
+          description: Price of the flight
+        startedAt:
+          type: string
+          format: date-time
+          description: Flight start time
+        finishedAt:
+          type: string
+          format: date-time
+          description: Flight end time
+    AirplanesResponse:
+      type: object
+      properties:
+        airplanes:
+          type: array
+          items:
+            type: string
+          description: List of available airplanes
+    ReserveRequest:
+      type: object
+      properties:
+        Number:
+          type: string
+    ReserveResponse:
+      type: object
+      properties:
+        Status:
+          type: boolean
+        Message:
+          type: string
+    RefundRequest:
+      type: object
+      properties:
+        Number:
+          type: string
+    RefundResponse:
+      type: object
+      properties:
+        Status:
+          type: boolean
+        Message:
+          type: string
