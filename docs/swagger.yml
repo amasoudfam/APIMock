@@ -101,15 +101,15 @@ paths:
                   - "2023-06-15"
         '500':
           description: Internal Server Error
-  /flights/{number}:
+  /flights/:id:
     get:
       summary: Get details of a specific flight
       tags:
         - Flights
       parameters:
-        - name: number
+        - name: id
           in: path
-          description: Flight number
+          description: Flight id
           required: true
           schema:
             type: string
