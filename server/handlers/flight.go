@@ -32,7 +32,7 @@ type FlightFields struct {
 	FinishedAt    time.Time `json:"finishedAt"`
 }
 
-func (f *Flight) FlightsFromOrgToDestInDate(ctx echo.Context) error {
+func (f *Flight) List(ctx echo.Context) error {
 	var req ListRequest
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid query parameters")
