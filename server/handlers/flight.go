@@ -121,6 +121,7 @@ func (f *Flight) Flight(ctx echo.Context) error {
 
 type ReserveRequest struct {
 	Number string `json:"number" validate:"required"`
+	Count  int    `json:"count" validate:"required"`
 }
 
 type ReserveResponse struct {
@@ -138,7 +139,7 @@ func (f *Flight) Reserve(ctx echo.Context) error {
 		return ctx.JSON(http.StatusUnprocessableEntity, "input data is not valid")
 	}
 
-	status, err := repository.DecrementEmptyCapacity(f.DB, req.Number)
+	status, err := repository.DecrementEmptyCapacity(f.DB, req.Number, req.Count)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to reserve the flight. Please try again later.")
 	}
@@ -158,6 +159,7 @@ func (f *Flight) Reserve(ctx echo.Context) error {
 
 type RefundRequest struct {
 	Number string `json:"number" validate:"required"`
+	Count  int    `json:"count" validate:"required"`
 }
 
 type RefundResponse struct {
@@ -175,7 +177,7 @@ func (f *Flight) Refund(ctx echo.Context) error {
 		return ctx.JSON(http.StatusUnprocessableEntity, "input data is not valid")
 	}
 
-	status, err := repository.IncrementEmptyCapacity(f.DB, req.Number)
+	status, err := repository.IncrementEmptyCapacity(f.DB, req.Number, req.Count)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to refund the flight. Please try again later.")
 	}

@@ -236,6 +236,8 @@ components:
       properties:
         Number:
           type: string
+        Count:
+          type: integer
     ReserveResponse:
       type: object
       properties:
@@ -248,6 +250,8 @@ components:
       properties:
         Number:
           type: string
+        Count:
+          type: integer
     RefundResponse:
       type: object
       properties:

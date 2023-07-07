@@ -62,7 +62,7 @@ func GetFlight(db *gorm.DB, flightNumber string) (*models.Flight, error) {
 	return &flight, nil
 }
 
-func DecrementEmptyCapacity(db *gorm.DB, flightNumber string) (bool, error) {
+func DecrementEmptyCapacity(db *gorm.DB, flightNumber string, count int) (bool, error) {
 	var flight models.Flight
 	now := time.Now()
 	if err := db.Where("number = ? AND started_at > ?", flightNumber, now).First(&flight).Error; err != nil {
@@ -70,7 +70,7 @@ func DecrementEmptyCapacity(db *gorm.DB, flightNumber string) (bool, error) {
 	}
 
 	if flight.EmptyCapacity > 0 {
-		if err := db.Model(&flight).Update("empty_capacity", flight.EmptyCapacity-1).Error; err != nil {
+		if err := db.Model(&flight).Update("empty_capacity", flight.EmptyCapacity-count).Error; err != nil {
 			return false, err
 		}
 		return true, nil
@@ -79,7 +79,7 @@ func DecrementEmptyCapacity(db *gorm.DB, flightNumber string) (bool, error) {
 	return false, nil
 }
 
-func IncrementEmptyCapacity(db *gorm.DB, flightNumber string) (bool, error) {
+func IncrementEmptyCapacity(db *gorm.DB, flightNumber string, count int) (bool, error) {
 	var flight models.Flight
 	now := time.Now()
 	if err := db.Where("number = ? AND started_at > ?", flightNumber, now).First(&flight).Error; err != nil {
@@ -87,7 +87,7 @@ func IncrementEmptyCapacity(db *gorm.DB, flightNumber string) (bool, error) {
 	}
 
 	if flight.EmptyCapacity < flight.Capacity {
-		if err := db.Model(&flight).Update("empty_capacity", flight.EmptyCapacity+1).Error; err != nil {
+		if err := db.Model(&flight).Update("empty_capacity", flight.EmptyCapacity+count).Error; err != nil {
 			return false, err
 		}
 		return true, nil
