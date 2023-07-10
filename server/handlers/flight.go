@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +14,7 @@ type Flight struct {
 	DB *gorm.DB
 }
 
-type ListRequest struct {
+type GetFlightsRequest struct {
 	Origin      string `query:"origin" validate:"required"`
 	Destination string `query:"destination" validate:"required"`
 	Date        string `query:"date" validate:"required,datetime=2006-01-02"`
@@ -30,10 +31,11 @@ type FlightFields struct {
 	Price         int       `json:"price"`
 	StartedAt     time.Time `json:"startedAt"`
 	FinishedAt    time.Time `json:"finishedAt"`
+	Penalties     datatypes.JSON
 }
 
-func (f *Flight) List(ctx echo.Context) error {
-	var req ListRequest
+func (f *Flight) GetFlights(ctx echo.Context) error {
+	var req GetFlightsRequest
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Invalid query parameters")
 	}
@@ -60,6 +62,7 @@ func (f *Flight) List(ctx echo.Context) error {
 			Price:         flight.Price,
 			StartedAt:     flight.StartedAt,
 			FinishedAt:    flight.FinishedAt,
+			Penalties:     flight.Penalties,
 		}
 	}
 
@@ -116,6 +119,7 @@ func (f *Flight) Flight(ctx echo.Context) error {
 		Price:         flight.Price,
 		StartedAt:     flight.StartedAt,
 		FinishedAt:    flight.FinishedAt,
+		Penalties:     flight.Penalties,
 	})
 }
 

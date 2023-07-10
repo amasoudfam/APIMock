@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -47,6 +48,21 @@ func seed(configPath string) error {
 			EmptyCapacity: 250,
 			StartedAt:     time.Now(),
 			FinishedAt:    time.Now().Add(time.Hour * 4),
+			Penalties: datatypes.JSON([]byte(`[{
+					"Start":   "",
+					"End":     "` + time.Now().Add(-48*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-48*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-24*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-24*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-1*time.Minute).Format(time.RFC3339) + `",
+					"Percent": 40
+				}]`)),
 		},
 		{
 			Number:        "FL001",
@@ -59,6 +75,21 @@ func seed(configPath string) error {
 			EmptyCapacity: 150,
 			StartedAt:     time.Now().Add(time.Hour * 8),
 			FinishedAt:    time.Now().Add(time.Hour * 12),
+			Penalties: datatypes.JSON([]byte(`[{
+					"Start":   "",
+					"End":     "` + time.Now().Add(-48*time.Hour).Add(8*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-48*time.Hour).Add(8*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-24*time.Hour).Add(8*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-24*time.Hour).Add(8*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(8*time.Hour).Add(-1*time.Minute).Format(time.RFC3339) + `",
+					"Percent": 40
+				}]`)),
 		},
 		{
 			Number:        "FL002",
@@ -71,6 +102,21 @@ func seed(configPath string) error {
 			EmptyCapacity: 180,
 			StartedAt:     time.Now().Add(time.Hour * 2),
 			FinishedAt:    time.Now().Add(time.Hour * 3),
+			Penalties: datatypes.JSON([]byte(`[{
+					"Start":   "",
+					"End":     "` + time.Now().Add(-48*time.Hour).Add(2*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-48*time.Hour).Add(2*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-24*time.Hour).Add(2*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-24*time.Hour).Add(2*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-1*time.Minute).Add(2*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 40
+				}]`)),
 		},
 		{
 			Number:        "FL003",
@@ -83,6 +129,21 @@ func seed(configPath string) error {
 			EmptyCapacity: 300,
 			StartedAt:     time.Now().Add(time.Hour * 5),
 			FinishedAt:    time.Now().Add(time.Hour * 12),
+			Penalties: datatypes.JSON([]byte(`[{
+					"Start":   "",
+					"End":     "` + time.Now().Add(-48*time.Hour).Add(5*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-48*time.Hour).Add(5*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-24*time.Hour).Add(5*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-24*time.Hour).Add(5*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-1*time.Minute).Add(5*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 40
+				}]`)),
 		},
 		{
 			Number:        "FL004",
@@ -95,6 +156,21 @@ func seed(configPath string) error {
 			EmptyCapacity: 400,
 			StartedAt:     time.Now().Add(time.Hour * 72),
 			FinishedAt:    time.Now().Add(time.Hour * 76),
+			Penalties: datatypes.JSON([]byte(`[{
+					"Start":   "",
+					"End":     "` + time.Now().Add(-48*time.Hour).Add(72*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-48*time.Hour).Add(72*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-24*time.Hour).Add(72*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-24*time.Hour).Add(72*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-1*time.Minute).Add(72*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 40
+				}]`)),
 		},
 		{
 			Number:        "FL005",
@@ -107,6 +183,21 @@ func seed(configPath string) error {
 			EmptyCapacity: 280,
 			StartedAt:     time.Now().Add(time.Hour * 74),
 			FinishedAt:    time.Now().Add(time.Hour * 80),
+			Penalties: datatypes.JSON([]byte(`[{
+					"Start":   "",
+					"End":     "` + time.Now().Add(-48*time.Hour).Add(74*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-48*time.Hour).Add(74*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-24*time.Hour).Add(74*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-24*time.Hour).Add(74*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-1*time.Minute).Add(74*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 40
+				}]`)),
 		},
 		{
 			Number:        "FL006",
@@ -119,6 +210,21 @@ func seed(configPath string) error {
 			EmptyCapacity: 220,
 			StartedAt:     time.Now().Add(time.Hour * 78),
 			FinishedAt:    time.Now().Add(time.Hour * 82),
+			Penalties: datatypes.JSON([]byte(`[{
+					"Start":   "",
+					"End":     "` + time.Now().Add(-48*time.Hour).Add(78*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-48*time.Hour).Add(78*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-24*time.Hour).Add(78*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 20
+				},
+				{
+					"Start":   "` + time.Now().Add(-24*time.Hour).Add(78*time.Hour).Format(time.RFC3339) + `",
+					"End":     "` + time.Now().Add(-1*time.Minute).Add(78*time.Hour).Format(time.RFC3339) + `",
+					"Percent": 40
+				}]`)),
 		},
 	}
 

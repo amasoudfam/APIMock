@@ -29,13 +29,13 @@ func SetupServer(cfg *config.Config, db *gorm.DB, port string) error {
 		DB: db,
 	}
 
-	e.GET("/flights", Flight.List)
+	e.GET("/flights", Flight.GetFlights)
 	e.GET("/flights/airplanes", Flight.Airplanes)
 	e.GET("/flights/cities", Flight.Cities)
 	e.GET("/flights/dates", Flight.Dates)
 	e.GET("/flights/:number", Flight.Flight)
-	e.GET("/flights/reserve", Flight.Reserve)
-	e.GET("/flights/refund", Flight.Refund)
+	e.POST("/flights/reserve", Flight.Reserve)
+	e.POST("/flights/refund", Flight.Refund)
 
 	return e.Start(fmt.Sprintf(":%s", port))
 }

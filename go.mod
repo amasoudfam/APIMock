@@ -9,6 +9,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
+	gorm.io/datatypes v1.2.0
 	gorm.io/gorm v1.25.1
 )
 
@@ -16,6 +17,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.3.1 // indirect
@@ -23,6 +25,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	golang.org/x/tools v0.10.0 // indirect
+	gorm.io/driver/mysql v1.4.7 // indirect
 )
 
 require (
