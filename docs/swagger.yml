@@ -3,8 +3,8 @@ info:
   version: 1.0.0
   title: Flight API
 servers:
-  - url: http://localhost:8200
-    description: on-air project
+  - url: http://localhost:3000
+    description: FlightMockApi project
 paths:
   /flights:
     get:
@@ -223,6 +223,9 @@ components:
           type: string
           format: date-time
           description: Flight end time
+        penalties:
+          type: object
+          $ref: '#/components/schemas/Penalties'
     AirplanesResponse:
       type: object
       properties:
@@ -259,3 +262,12 @@ components:
           type: boolean
         Message:
           type: string
+    Penalties:
+      type: object
+      properties:
+        Start:
+          type: string
+        End:
+          type: string
+        Percent:
+          type: number
