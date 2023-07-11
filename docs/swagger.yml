@@ -267,7 +267,10 @@ components:
       properties:
         Start:
           type: string
+          example: "2023-07-11T23:59:06+03:30"
         End:
           type: string
+          example: "2023-07-11T23:59:06+03:30"
         Percent:
           type: number
+          example: 20
