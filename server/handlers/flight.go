@@ -29,8 +29,8 @@ type FlightFields struct {
 	Capacity      int       `json:"capacity"`
 	EmptyCapacity int       `json:"empty_capacity"`
 	Price         int       `json:"price"`
-	StartedAt     time.Time `json:"startedAt"`
-	FinishedAt    time.Time `json:"finishedAt"`
+	StartedAt     time.Time `json:"started_at"`
+	FinishedAt    time.Time `json:"finished_at"`
 	Penalties     datatypes.JSON
 }
 
