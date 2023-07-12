@@ -152,12 +152,13 @@ func (f *Flight) Reserve(ctx echo.Context) error {
 		Status:  status,
 		Message: "",
 	}
-	if status {
-		res.Message = "Flight reservation was successful."
-	} else {
+
+	if !status {
 		res.Message = "Flight reservation failed. No available capacity."
+		return ctx.JSON(http.StatusExpectationFailed, res)
 	}
 
+	res.Message = "Flight reservation was successful."
 	return ctx.JSON(http.StatusOK, res)
 }
 
@@ -190,11 +191,12 @@ func (f *Flight) Refund(ctx echo.Context) error {
 		Status:  status,
 		Message: "",
 	}
-	if status {
-		res.Message = "Flight refund was successful."
-	} else {
+
+	if !status {
 		res.Message = "Flight refund failed."
+		return ctx.JSON(http.StatusExpectationFailed, res)
 	}
 
+	res.Message = "Flight refund was successful."
 	return ctx.JSON(http.StatusOK, res)
 }
